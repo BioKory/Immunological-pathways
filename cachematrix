@@ -1,0 +1,48 @@
+#1#Funcion of functions.  creates a special "matrix" object that can cache its inverse.
+
+makeCacheMatrix <- function(x= matrix()) { 
+  m <- NULL
+  #1#modifies an existing variable found
+  # by walking up the parent environments by mean of the value assigned to x.
+  #allso by mean of the value assigned to m. (up-level)
+  set <- function(y) {
+    x <<- y
+    m <<- NULL
+  }
+  #2#value x is caching in get
+  get <- function() x
+  #3#modifies an existing variable found
+  # by walking up the parent environments by mean of the value assigned to m (m 
+  #can come from the global environment on another function as cachemean). 
+  setinverse <- function(inverse) m <<- solve
+  
+  #4#value m is caching in getmean
+  getinverse <- function() m
+  
+  ##list of all the functions.
+  list(set = set, get = get,
+       setinverse = setinverse,
+       getinverse = getinverse)
+}
+
+###computes the inverse of the special "matrix" returned by
+#makeCacheMatrix above
+
+cacheSolve <- function(x=matrix,...) {
+  
+  m <- x$getinverse()
+  
+  #condition to avoid calculate if the inverse of the introduced value 
+  #has been calculated before
+  if(!is.null(m)) {
+    message("getting cached data")
+    return(m)
+  }
+  #get the data through the makeCacheMetrix function    
+  data <- x$get()
+  #calculating the inverse of a matrix 'x'
+  m <- solve(data, ...)
+  x$setinverse(m)
+  m
+}
+
